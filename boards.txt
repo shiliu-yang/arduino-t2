@@ -1,0 +1,9 @@
+t2.name=Tuya T2
+t2.build.board=TUYA_T2
+t2.build.variant=T2
+t2.compiler.tuyaos.includes={build.variant.path}/tuyaos_includes.txt
+# t2.build.cpu=arm968e-s
+# t2.build.arch=armv5te
+
+t2.upload.tool=tyutool
+t2.upload.tool.default=tyutool

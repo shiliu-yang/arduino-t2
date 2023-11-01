@@ -1,0 +1,127 @@
+name=Tuya
+version=0.0.1
+
+## Compiler global definitions
+compiler.path={runtime.tools.gcc-arm-none-eabi.path}/bin/
+compiler.prefix=arm-none-eabi-
+
+compiler.c.cmd={compiler.prefix}gcc
+compiler.cpp.cmd={compiler.prefix}g++
+compiler.S.cmd={compiler.prefix}gcc
+compiler.as.cmd={compiler.prefix}as
+compiler.ar.cmd={compiler.prefix}ar
+compiler.objcopy.cmd={compiler.prefix}objcopy
+
+compiler.c.flags=-c -g -mthumb -mcpu=arm968e-s -march=armv5te -mthumb-interwork -mlittle-endian -Os -std=c99 -ffunction-sections -Wall -fsigned-char -fdata-sections -Wunknown-pragmas -nostdlib -Wno-unused-function -Wno-unused-but-set-variable
+
+compiler.cpp.flags=-c -g -mthumb -mcpu=arm968e-s -march=armv5te -mthumb-interwork -mlittle-endian -Os -std=c++11 -ffunction-sections -Wall -fsigned-char -fdata-sections -Wunknown-pragmas -nostdlib -Wno-unused-function
+
+compiler.S.flags=-c -g -marm -mthumb-interwork -mcpu=arm968e-s -march=armv5te -x assembler-with-cpp
+
+compiler.ar.flags=rcs
+
+compiler.os.flags=-c -g -marm -mcpu=arm968e-s -march=armv5te -mthumb-interwork -mlittle-endian -Os -std=c99 -ffunction-sections -Wall -fsigned-char -fdata-sections -Wunknown-pragmas
+
+## Binary package
+package.path={runtime.tools.package_tool.path}/linux/
+package.path.windows={runtime.tools.package_tool.path}\windows\
+
+package.cmd=bin_pack.sh
+package.cmd.windows=bin_pack.bat
+
+#
+## t2 vendor include path start
+#
+compiler.include.vendor.t2="-I{build.core.path}/arduino/vendor/common" "-I{build.core.path}/arduino/vendor/demo" "-I{build.core.path}/arduino/vendor/app" "-I{build.core.path}/arduino/vendor/app/config" "-I{build.core.path}/arduino/vendor/app/standalone-station" "-I{build.core.path}/arduino/vendor/app/standalone-ap" "-I{build.core.path}/arduino/vendor/ip/common" "-I{build.core.path}/arduino/vendor/ip/ke" "-I{build.core.path}/arduino/vendor/ip/mac" "-I{build.core.path}/arduino/vendor/ip/lmac/src/hal" "-I{build.core.path}/arduino/vendor/ip/lmac/src/mm" "-I{build.core.path}/arduino/vendor/ip/lmac/src/ps" "-I{build.core.path}/arduino/vendor/ip/lmac/src/rd" "-I{build.core.path}/arduino/vendor/ip/lmac/src/rwnx" "-I{build.core.path}/arduino/vendor/ip/lmac/src/rx" "-I{build.core.path}/arduino/vendor/ip/lmac/src/scan" "-I{build.core.path}/arduino/vendor/ip/lmac/src/sta" "-I{build.core.path}/arduino/vendor/ip/lmac/src/tx" "-I{build.core.path}/arduino/vendor/ip/lmac/src/vif" "-I{build.core.path}/arduino/vendor/ip/lmac/src/rx/rxl" "-I{build.core.path}/arduino/vendor/ip/lmac/src/tx/txl" "-I{build.core.path}/arduino/vendor/ip/lmac/src/p2p" "-I{build.core.path}/arduino/vendor/ip/lmac/src/chan" "-I{build.core.path}/arduino/vendor/ip/lmac/src/td" "-I{build.core.path}/arduino/vendor/ip/lmac/src/tpc" "-I{build.core.path}/arduino/vendor/ip/lmac/src/tdls" "-I{build.core.path}/arduino/vendor/ip/umac/src/mesh" "-I{build.core.path}/arduino/vendor/ip/umac/src/mfp" "-I{build.core.path}/arduino/vendor/ip/umac/src/rc" "-I{build.core.path}/arduino/vendor/ip/umac/src/apm" "-I{build.core.path}/arduino/vendor/ip/umac/src/bam" "-I{build.core.path}/arduino/vendor/ip/umac/src/llc" "-I{build.core.path}/arduino/vendor/ip/umac/src/me" "-I{build.core.path}/arduino/vendor/ip/umac/src/rxu" "-I{build.core.path}/arduino/vendor/ip/umac/src/scanu" "-I{build.core.path}/arduino/vendor/ip/umac/src/sm" "-I{build.core.path}/arduino/vendor/ip/umac/src/txu" "-I{build.core.path}/arduino/vendor/driver/include" "-I{build.core.path}/arduino/vendor/driver/common/reg" "-I{build.core.path}/arduino/vendor/driver/entry" "-I{build.core.path}/arduino/vendor/driver/dma" "-I{build.core.path}/arduino/vendor/driver/intc" "-I{build.core.path}/arduino/vendor/driver/phy" "-I{build.core.path}/arduino/vendor/driver/pwm" "-I{build.core.path}/arduino/vendor/driver/rc_beken" "-I{build.core.path}/arduino/vendor/driver/flash" "-I{build.core.path}/arduino/vendor/driver/rw_pub" "-I{build.core.path}/arduino/vendor/driver/common/reg" "-I{build.core.path}/arduino/vendor/driver/common" "-I{build.core.path}/arduino/vendor/driver/uart" "-I{build.core.path}/arduino/vendor/driver/sys_ctrl" "-I{build.core.path}/arduino/vendor/driver/gpio" "-I{build.core.path}/arduino/vendor/driver/general_dma" "-I{build.core.path}/arduino/vendor/driver/spidma" "-I{build.core.path}/arduino/vendor/driver/icu" "-I{build.core.path}/arduino/vendor/driver/spi" "-I{build.core.path}/arduino/vendor/func/include" "-I{build.core.path}/arduino/vendor/func/misc" "-I{build.core.path}/arduino/vendor/func/rf_test" "-I{build.core.path}/arduino/vendor/func/bk7011_cal" "-I{build.core.path}/arduino/vendor/func/user_driver" "-I{build.core.path}/arduino/vendor/func/power_save" "-I{build.core.path}/arduino/vendor/func/uart_debug" "-I{build.core.path}/arduino/vendor/func/ethernet_intf" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/hostapd" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/bk_patch" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/src/utils" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/src/ap" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/src/common" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/src/drivers" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/src" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/wpa_supplicant" "-I{build.core.path}/arduino/vendor/func/wpa_supplicant-2.9/bk_patch" "-I{build.core.path}/arduino/TuyaOS/adapter/include" "-I{build.core.path}/arduino/TuyaOS/adapter/include/lwip" "-I{build.core.path}/arduino/vendor/func/temp_detect" "-I{build.core.path}/arduino/vendor/func/spidma_intf" "-I{build.core.path}/arduino/vendor/func/rwnx_intf" "-I{build.core.path}/arduino/vendor/func/joint_up" "-I{runtime.platform.path}/t2Vendor/os/include" "-I{runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/portable/Keil/ARM968es" "-I{runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/include" "-I{runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0" "-I{build.core.path}/arduino/vendor/func/libc" "-I{build.core.path}/arduino/vendor/func/wolfssl" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/inc" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gap/gapc" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gap/gapm" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gatt" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gatt/attc" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gatt/attm" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gatt/atts" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gatt/gattc" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/gatt/gattm" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/l2c/l2cc" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/hl/src/l2c/l2cm" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/ll/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/ll/import/reg" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/ll/src" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/ll/src/llc" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/ll/src/lld" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/ble/ll/src/llm" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/em/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/hci/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/hci/src" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/sch/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/ip/sch/import" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/aes/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/aes/src" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/common/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/dbg/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/dbg/src" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/ecc_p256/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/h4tl/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/ke/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_lib/modules/ke/src" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_pub/prf" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/rwip/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/rwip/import/reg" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/nvds/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/config" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/driver/reg" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/driver/rf" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/driver/uart" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/platform/7231n/entry" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/arch/armv5" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/arch/armv5/ll" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/arch/armv5/compiler" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_pub/profiles/comm/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_pub/app/api" "-I{build.core.path}/arduino/vendor/driver/ble_5_x_rw/ble_pub/ui'
+#
+## t2 vendor include path end
+#
+
+#
+## tuyaos adapter include path start
+#
+compiler.include.tuyaos_adapter="-I{build.core.path}/arduino/TuyaOS/include" "-I{build.core.path}/arduino/TuyaOS/include/lwip"
+#
+## tuyaos adapter include path end
+#
+
+#
+## tuyaos include path start
+#
+compiler.include.tuyaos="-I{build.core.path}/arduino/TuyaOS/include/base" "-I{build.core.path}/arduino/TuyaOS/include/base/include" "-I{build.core.path}/arduino/TuyaOS/include/components" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_rpc" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_rpc/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_driver" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_driver/include" "-I{build.core.path}/arduino/TuyaOS/include/components/base_event" "-I{build.core.path}/arduino/TuyaOS/include/components/base_event/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_wifi" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_wifi/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_network" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_network/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_system_service" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_system_service/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_system_service/include/utilities" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_compatible" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_compatible/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_mf_test" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_mf_test/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_wifi" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_wifi/include" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_cJSON" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_cJSON/include" "-I{build.core.path}/arduino/TuyaOS/include/components/base_db" "-I{build.core.path}/arduino/TuyaOS/include/components/base_db/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_upgrade" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_upgrade/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_netmgr" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_netmgr/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_devos" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_devos/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_lan" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_lan/include" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_mqtt" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_mqtt/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_system" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_system/include" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_tls" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_tls/include" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_tls/include/mbedtls" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/online_log" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/tls" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/timer_task" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/netcfg_qrcode" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/mqtt" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/protocol" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/log_seq" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/http" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_tuya_cloud/include/iot_dns" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_wired" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_wired/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_dp" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_dp/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_bluetooth" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_bluetooth/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_bt" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_bt/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_wifi_ffc" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_wifi_ffc/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_api_iot" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_api_iot/include" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_http" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_http/include" "-I{build.core.path}/arduino/TuyaOS/include/components/base_uf" "-I{build.core.path}/arduino/TuyaOS/include/components/base_uf/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_api_wifi" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_api_wifi/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/lwip" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/lwip/prot" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/lwip/priv" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/lwip/arch" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/lwip/apps" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/netif" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/netif/ppp" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/netif/ppp/polarssl" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/compat" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/compat/posix" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/compat/posix/sys" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/compat/posix/arpa" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/compat/posix/net" "-I{build.core.path}/arduino/TuyaOS/include/components/tal_lwip/include/compat/stdc" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_websocket" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_websocket/include" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_transport" "-I{build.core.path}/arduino/TuyaOS/include/components/lib_transport/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_api_wired" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_api_wired/include" "-I{build.core.path}/arduino/TuyaOS/include/components/base_security" "-I{build.core.path}/arduino/TuyaOS/include/components/base_security/include" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_wired" "-I{build.core.path}/arduino/TuyaOS/include/components/svc_wired/include"
+#
+## tuyaos include path end
+#
+
+#
+## t2 freertos src start
+#
+compiler.os.include="-I{runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/portable/Keil/ARM968es" "-I{runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/include" "-I{runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0"
+#
+## t2 freertos src end
+#
+
+## arduino app build
+## Compile c files
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} {includes} -I{build.core.path}/arduino {compiler.include.vendor.t2} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} "{source_file}" -o "{object_file}"
+
+## Compile cpp files
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} {includes} -I{build.core.path}/arduino {compiler.include.vendor.t2} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} "{source_file}" -o "{object_file}"
+
+## Compile S files
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} {includes} -I{build.core.path}/arduino {compiler.include.vendor.t2} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} "{source_file}" -o "{object_file}"
+
+## ar
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
+
+# build os file
+recipe.hooks.linking.prelink.1.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/croutine.c -o "{build.path}/croutine.c.o"
+recipe.hooks.linking.prelink.2.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/event_groups.c -o "{build.path}/event_groups.c.o"
+recipe.hooks.linking.prelink.3.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/list.c -o "{build.path}/list.c.o"
+recipe.hooks.linking.prelink.4.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/portable/Keil/ARM968es/port.c -o "{build.path}/port.c.o"
+recipe.hooks.linking.prelink.5.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/portable/MemMang/heap_6.c -o "{build.path}/heap_6.c.o"
+recipe.hooks.linking.prelink.6.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/queue.c -o "{build.path}/queue.c.o"
+recipe.hooks.linking.prelink.7.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/tasks.c -o "{build.path}/tasks.c.o"
+recipe.hooks.linking.prelink.8.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/FreeRTOS/Source/timers.c -o "{build.path}/timers.c.o"
+recipe.hooks.linking.prelink.9.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/FreeRTOSv9.0.0/rtos_pub.c -o "{build.path}/rtos_pub.c.o"
+
+# build os normal file
+recipe.hooks.linking.prelink.10.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/mem_arch.c -o "{build.path}/mem_arch.c.o"
+recipe.hooks.linking.prelink.11.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/platform_stub.c -o "{build.path}/platform_stub.c.o"
+recipe.hooks.linking.prelink.12.pattern="{compiler.path}{compiler.c.cmd}" {compiler.os.flags} {compiler.include.vendor.t2} {compiler.os.include} {compiler.include.tuyaos_adapter} {compiler.include.tuyaos} {runtime.platform.path}/t2Vendor/os/str_arch.c -o "{build.path}/str_arch.c.o"
+
+## os object files
+compiler.os.object={build.path}/croutine.c.o {build.path}/event_groups.c.o {build.path}/list.c.o {build.path}/port.c.o {build.path}/heap_6.c.o {build.path}/queue.c.o {build.path}/tasks.c.o {build.path}/timers.c.o {build.path}/rtos_pub.c.o {build.path}/mem_arch.c.o {build.path}/platform_stub.c.o {build.path}/str_arch.c.o
+
+## combine
+combine.flags=-g -Wl,--gc-sections -marm -mcpu=arm968e-s -mthumb-interwork -nostdlib -Xlinker -Map={build.path}/tuya.map -Wl,-wrap,malloc -Wl,-wrap,_malloc_r -Wl,-wrap,free -Wl,-wrap,_free_r -Wl,-wrap,zalloc -Wl,-wrap,calloc -Wl,-wrap,realloc -Wl,-wrap,_realloc_r -Wl,-wrap,printf -Wl,-wrap,vsnprintf -Wl,-wrap,snprintf -Wl,-wrap,sprintf -Wl,-wrap,puts -Wl,-wrap,strtod -Wl,-wrap,qsort -Wl,-wrap,sscanf
+
+recipe.c.combine.pattern="{compiler.path}{compiler.c.cmd}" {combine.flags} -o {build.path}/{build.project_name}.axf {compiler.os.object} {object_files} -L{build.core.path}/arduino/TuyaOS/libs -L{build.core.path}/arduino/vendor/lib -lrwnx -lblenohost -ltuyaos "{archive_file_path}" -lrwnx -lblenohost -ltuyaos "{archive_file_path}" -T{build.core.path}/arduino/vendor/build/bk7231n_ota.ld
+
+## map
+
+## asm
+
+## bin
+recipe.hooks.linking.postlink.1.pattern="{compiler.path}{compiler.objcopy.cmd}" -O binary {build.path}/{build.project_name}.axf {build.path}/{build.project_name}.bin
+
+## pack
+recipe.hooks.linking.postlink.2.pattern={package.path}{package.cmd} {package.path} {build.path} {build.project_name}
+
+## encrypt
+# recipe.hooks.linking.postlink.2.pattern="{runtime.tools.package_tool.path}/linux/encrypt" {build.path}/{build.project_name}.bin 510fb093 a3cbeadc 5993a17e c7adeb03 10000
+
+## mpytools
+# recipe.hooks.linking.postlink.3.pattern= python "{runtime.tools.package_tool.path}/linux/mpytools.py" {runtime.tools.package_tool.path}/linux/t2_bootloader_enc.bin {build.path}/{build.project_name}_enc.bin {build.path}/config.json
+
+## pack
+# recipe.hooks.linking.postlink.4.pattern="{runtime.tools.package_tool.path}/linux/beken_packager" {build.path}/config.json
+# recipe.hooks.linking.postlink.5.pattern=move ./{build.project_name}_enc_uart_1.00.bin {build.path}/
+# recipe.hooks.linking.postlink.6.pattern=move {build.path}/{build.project_name}_enc_uart_1.00.bin {build.path}/{build.project_name}_UA.bin
+
+## upload
+tools.tyutool.path={runtime.tools.tyutool.path}
+tools.tyutool.cmd.path=cli.py
+
+tools.tyutool.upload.protocol=serial
+tools.tyutool.upload.pattern= python "{path}/cli.py" write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin
