@@ -23,11 +23,15 @@ compiler.ar.flags=rcs
 compiler.os.flags=-c -g -marm -mcpu=arm968e-s -march=armv5te -mthumb-interwork -mlittle-endian -Os -std=c99 -ffunction-sections -Wall -fsigned-char -fdata-sections -Wunknown-pragmas
 
 ## Binary package
-package.path={runtime.tools.package_tool.path}/linux/
-package.path.windows={runtime.tools.package_tool.path}\windows\
+package.path={runtime.tools.package_tool.path}/linux
+package.path.windows={runtime.tools.package_tool.path}\windows
 
 package.cmd=bin_pack.sh
 package.cmd.windows=bin_pack.bat
+
+## upload tools
+tools.tyutool.path={runtime.tools.tyutool.path}/linux
+tools.tyutool.path.windows={runtime.tools.tyutool.path}\win
 
 #
 ## t2 vendor include path start
@@ -106,22 +110,8 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.cmd}" {combine.flags} -o {b
 recipe.hooks.linking.postlink.1.pattern="{compiler.path}{compiler.objcopy.cmd}" -O binary {build.path}/{build.project_name}.axf {build.path}/{build.project_name}.bin
 
 ## pack
-recipe.hooks.linking.postlink.2.pattern={package.path}{package.cmd} {package.path} {build.path} {build.project_name}
-
-## encrypt
-# recipe.hooks.linking.postlink.2.pattern="{runtime.tools.package_tool.path}/linux/encrypt" {build.path}/{build.project_name}.bin 510fb093 a3cbeadc 5993a17e c7adeb03 10000
-
-## mpytools
-# recipe.hooks.linking.postlink.3.pattern= python "{runtime.tools.package_tool.path}/linux/mpytools.py" {runtime.tools.package_tool.path}/linux/t2_bootloader_enc.bin {build.path}/{build.project_name}_enc.bin {build.path}/config.json
-
-## pack
-# recipe.hooks.linking.postlink.4.pattern="{runtime.tools.package_tool.path}/linux/beken_packager" {build.path}/config.json
-# recipe.hooks.linking.postlink.5.pattern=move ./{build.project_name}_enc_uart_1.00.bin {build.path}/
-# recipe.hooks.linking.postlink.6.pattern=move {build.path}/{build.project_name}_enc_uart_1.00.bin {build.path}/{build.project_name}_UA.bin
+recipe.hooks.linking.postlink.2.pattern={package.path}/{package.cmd} {package.path} {build.path} {build.project_name}
 
 ## upload
-tools.tyutool.path={runtime.tools.tyutool.path}
-tools.tyutool.cmd.path=cli.py
-
 tools.tyutool.upload.protocol=serial
-tools.tyutool.upload.pattern= python "{path}/cli.py" write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin
+tools.tyutool.upload.pattern={tools.tyutool.path}/cli write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin
