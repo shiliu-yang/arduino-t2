@@ -23,15 +23,10 @@ compiler.ar.flags=rcs
 compiler.os.flags=-c -g -marm -mcpu=arm968e-s -march=armv5te -mthumb-interwork -mlittle-endian -Os -std=c99 -ffunction-sections -Wall -fsigned-char -fdata-sections -Wunknown-pragmas
 
 ## Binary package
-package.path={runtime.tools.package_tool.path}/linux
-package.path.windows={runtime.tools.package_tool.path}\windows
+package.path={runtime.tools.package_tool.path}
 
 package.cmd=bin_pack.sh
 package.cmd.windows=bin_pack.bat
-
-## upload tools
-tools.tyutool.path={runtime.tools.tyutool.path}/linux
-tools.tyutool.path.windows={runtime.tools.tyutool.path}\win
 
 #
 ## t2 vendor include path start
@@ -114,4 +109,4 @@ recipe.hooks.linking.postlink.2.pattern={package.path}/{package.cmd} {package.pa
 
 ## upload
 tools.tyutool.upload.protocol=serial
-tools.tyutool.upload.pattern={tools.tyutool.path}/cli write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin
+tools.tyutool.upload.pattern={runtime.tools.tyutool.path}/cli write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin
