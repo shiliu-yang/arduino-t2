@@ -74,7 +74,7 @@ OSStatus rtos_push_to_queue( beken_queue_t* queue, void* message, uint32_t timeo
 /******************************************************
  *               Variables Definitions
  ******************************************************/
-xTaskHandle  app_thread_handle;
+// xTaskHandle  app_thread_handle;
 static beken_time_t beken_time_offset = 0;
 
 
