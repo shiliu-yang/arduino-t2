@@ -95,7 +95,7 @@ compiler.os.object={build.path}/croutine.c.o {build.path}/event_groups.c.o {buil
 ## combine
 combine.flags=-g -Wl,--gc-sections -marm -mcpu=arm968e-s -mthumb-interwork -nostdlib -Xlinker -Map={build.path}/tuya.map -Wl,-wrap,malloc -Wl,-wrap,_malloc_r -Wl,-wrap,free -Wl,-wrap,_free_r -Wl,-wrap,zalloc -Wl,-wrap,calloc -Wl,-wrap,realloc -Wl,-wrap,_realloc_r -Wl,-wrap,printf -Wl,-wrap,vsnprintf -Wl,-wrap,snprintf -Wl,-wrap,sprintf -Wl,-wrap,puts -Wl,-wrap,strtod -Wl,-wrap,qsort -Wl,-wrap,sscanf
 
-recipe.c.combine.pattern="{compiler.path}{compiler.c.cmd}" {combine.flags} -o {build.path}/{build.project_name}.axf {compiler.os.object} {object_files} -L{build.core.path}/arduino/TuyaOS/libs -L{build.core.path}/arduino/vendor/lib -lrwnx -lblenohost -ltuyaos "{archive_file_path}" -lrwnx -lblenohost -ltuyaos "{archive_file_path}" -T{build.core.path}/arduino/vendor/build/bk7231n_ota.ld
+recipe.c.combine.pattern="{compiler.path}{compiler.c.cmd}" {combine.flags} -o {build.path}/{build.project_name}.axf {compiler.os.object} {object_files} -L{build.core.path}/arduino/TuyaOS/libs -L{build.core.path}/arduino/vendor/lib -lrwnx -lblenohost -ltuyaos "{archive_file_path}" -lrwnx -lblenohost -ltuyaos -lstdc++ "{archive_file_path}" -T{build.core.path}/arduino/vendor/build/bk7231n_ota.ld
 
 ## map
 
