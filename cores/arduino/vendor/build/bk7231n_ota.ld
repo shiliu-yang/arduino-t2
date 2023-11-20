@@ -497,6 +497,19 @@ SECTIONS
 
 /* This symbol defines end of code/data sections. Heap starts here. */
 	PROVIDE(end    	  = .);
+
+	. = __exidx_end + SIZEOF(.data);
+	. = ALIGN(0x8);
+	.ty_text_section ALIGN(0x10000) :
+	{
+		_ty_section_start = .;
+		/* this is for c++ global constructor init */
+		PROVIDE_HIDDEN (__init_array_start = .);
+		KEEP (*(SORT(*.init_array.*)))
+		KEEP (*(*.init_array*))
+		PROVIDE_HIDDEN (__init_array_end = .);
+	} >flash
+	ty_section_size = SIZEOF(.ty_text_section);
 }
  GROUP(
    libgcc.a

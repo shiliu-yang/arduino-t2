@@ -35,6 +35,8 @@ STATIC void tuya_app_thread(void *arg)
 {
     OPERATE_RET rt = OPRT_OK;
 
+    __asm("BL __libc_init_array");
+
     /* Initialization LWIP first!!! */
 #if defined(ENABLE_LWIP) && (ENABLE_LWIP == 1)
     TUYA_LwIP_Init();
@@ -64,3 +66,16 @@ void tuya_app_main(void)
 #if (defined(__cplusplus)||defined(c_plusplus))
 }
 #endif
+
+/* stub for __libc_init_array */
+extern "C" void _fini(void) {}
+extern "C" void _init(void)
+{
+    ;
+}
+
+// This hack is needed because Beken SDK is not linking against libstdc++ correctly.
+extern "C" {
+void * __dso_handle = 0;
+}
+
