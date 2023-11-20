@@ -35,8 +35,6 @@ STATIC void tuya_app_thread(void *arg)
 {
     OPERATE_RET rt = OPRT_OK;
 
-    __asm("BL __libc_init_array");
-
     /* Initialization LWIP first!!! */
 #if defined(ENABLE_LWIP) && (ENABLE_LWIP == 1)
     TUYA_LwIP_Init();

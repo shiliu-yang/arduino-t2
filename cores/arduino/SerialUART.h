@@ -10,7 +10,7 @@
 
 namespace arduino {
 
-class SerialUART : public Stream
+class SerialUART : public HardwareSerial
 {
 public:
     SerialUART(TUYA_UART_NUM_E id);
@@ -37,5 +37,8 @@ private:
 };
 
 }
+
+// extern arduino::SerialUART _SerialUART0_;
+extern arduino::SerialUART _SerialUART1_;
 
 #endif // __SERIAL_UART_H__

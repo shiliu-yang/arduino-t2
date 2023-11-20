@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "SerialUART.h"
 #include <functional>
 
@@ -115,7 +116,7 @@ void SerialUART::begin(unsigned long baudrate, uint16_t config)
     uartConfig.flowctrl = TUYA_UART_FLOWCTRL_NONE;
 
     tkl_uart_init(__uartID, &uartConfig);
-    // tkl_uart_rx_irq_cb_reg(__uartID, __uart_rx_cb);
+    tkl_uart_rx_irq_cb_reg(__uartID, __uart_rx_cb);
 
     tal_mutex_create_init(&__mutex);
 
@@ -204,3 +205,6 @@ size_t SerialUART::write(const uint8_t* c, size_t len)
 SerialUART::operator bool() {
     return (__uartID < UART_NUM_MAX) ? true : false;
 }
+
+// SerialUART _SerialUART0_(UART_NUM_0);
+SerialUART _SerialUART1_(UART_NUM_1);
