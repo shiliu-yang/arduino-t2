@@ -21,9 +21,9 @@ using namespace arduino;
 
 #include "SerialUART.h"
 
-// #define Serial _SerialUART0_
+#define Serial _SerialUART0_
 
-// #define Serial1 _SerialUART0_
+#define Serial1 _SerialUART0_
 #define Serial2 _SerialUART1_
 
 #endif

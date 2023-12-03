@@ -38,7 +38,7 @@ private:
 
 }
 
-// extern arduino::SerialUART _SerialUART0_;
+extern arduino::SerialUART _SerialUART0_;
 extern arduino::SerialUART _SerialUART1_;
 
 #endif // __SERIAL_UART_H__
