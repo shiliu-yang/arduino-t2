@@ -103,12 +103,14 @@ SECTIONS
     _itcmcode_ram_begin = ADDR(.itcm.code);
     _itcmcode_ram_end = _itcmcode_ram_begin + SIZEOF(.itcm.code);
 
-    . = ALIGN(0x8);
+
 /* code, instructions.for example: i=i+1; */
+
+    . = ALIGN(0x8);
 	.text : 
 	{
-	    *(.text)
-	    *(.text.*)
+	    *(EXCLUDE_FILE(*core.a:*).text)
+	    *(EXCLUDE_FILE(*core.a:*).text.*)
 	    *(.stub)
 	    /* .gnu.warning sections are handled specially by elf32.em.  */
 	    *(.gnu.warning)
@@ -119,19 +121,20 @@ SECTIONS
 /* read only data.for example: const int rom_data[3]={1,2,3}; */
 	.rodata ALIGN(8) : 
 	{
-		*(.rodata)
-		*(.rodata.*)
+		*(EXCLUDE_FILE(*core.a:*)*.rodata)
+		*(EXCLUDE_FILE(*core.a:*)*.rodata.*)
 		*(.gnu.linkonce.r*)
 	} > flash
-	
+
+
+    __exidx_start = .;
 	.ARM.exidx :
 	{
-	    PROVIDE_HIDDEN (__exidx_start = .);
 	    *(.ARM.exidx*)
 	    *(.gnu.linkonce.armexidx.*)
-	    PROVIDE_HIDDEN (__exidx_end = .);
 	} > flash
-	
+    __exidx_end = .;
+    
     . = ORIGIN(tcm);
     .tcm ALIGN(8) :
     {
@@ -497,6 +500,19 @@ SECTIONS
 
 /* This symbol defines end of code/data sections. Heap starts here. */
 	PROVIDE(end    	  = .);
+
+	. = __exidx_end + SIZEOF(.data);
+	. = ALIGN(0x8);
+	.ty_text_section ALIGN(0x10000) :
+	{
+		_ty_section_start = .;
+		/* this is for c++ global constructor init */
+		PROVIDE_HIDDEN (__init_array_start = .);
+		KEEP (*(SORT(*.init_array.*)))
+		KEEP (*(*.init_array*))
+		PROVIDE_HIDDEN (__init_array_end = .);
+	} >flash
+	ty_section_size = SIZEOF(.ty_text_section);
 }
  GROUP(
    libgcc.a

@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "SerialUART.h"
 #include <functional>
 
@@ -28,21 +29,21 @@ extern "C" void __uart_rx_cb(TUYA_UART_NUM_E port_id)
     uint8_t c = 0;
     int rt = 0;
 
-    bk_printf("uart cb %d\r\n", port_id);
+    // bk_printf("uart cb %d\r\n", port_id);
 
     if (__serialPtr[port_id] == NULL) {
-        tkl_log_output("__serialPtr is NULL\r\n");
+        // tkl_log_output("__serialPtr is NULL\r\n");
         return;
     }
 
     while (1) {
         rt = tkl_uart_read(port_id, &c, 1);
         if (rt != 1) {
-            tkl_log_output("uart read error %d\r\n", rt);
+            // tkl_log_output("uart read error %d\r\n", rt);
             break;
         }
-        bk_printf("- %c \r\n", c);
-        // __serialPtr[port_id]->__rxBufWrite(c);
+        // bk_printf("- %c \r\n", c);
+        __serialPtr[port_id]->__rxBufWrite(c);
     }
 
     return;
@@ -115,7 +116,7 @@ void SerialUART::begin(unsigned long baudrate, uint16_t config)
     uartConfig.flowctrl = TUYA_UART_FLOWCTRL_NONE;
 
     tkl_uart_init(__uartID, &uartConfig);
-    // tkl_uart_rx_irq_cb_reg(__uartID, __uart_rx_cb);
+    tkl_uart_rx_irq_cb_reg(__uartID, __uart_rx_cb);
 
     tal_mutex_create_init(&__mutex);
 
@@ -204,3 +205,6 @@ size_t SerialUART::write(const uint8_t* c, size_t len)
 SerialUART::operator bool() {
     return (__uartID < UART_NUM_MAX) ? true : false;
 }
+
+SerialUART _SerialUART0_(UART_NUM_0);
+SerialUART _SerialUART1_(UART_NUM_1);
