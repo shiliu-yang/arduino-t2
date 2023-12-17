@@ -31,7 +31,6 @@ STATIC void arduino_thread(void *arg)
     return;
 }
 
-void bk_printf(const char *fmt, ...);
 extern char get_rx2_flag(void);
 
 STATIC void tuya_app_thread(void *arg)
