@@ -109,4 +109,4 @@ recipe.hooks.linking.postlink.2.pattern={package.path}/{package.cmd} {package.pa
 
 ## upload
 tools.tyutool.upload.protocol=serial
-tools.tyutool.upload.pattern={runtime.tools.tyutool.path}/cli write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin
+tools.tyutool.upload.pattern={runtime.tools.tyutool.path}/cli write -d t2 -p {upload.port.address} -b 921600 -s 0x11000 -f {build.path}/{build.project_name}_UA.bin --tqdm
