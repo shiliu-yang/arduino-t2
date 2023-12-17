@@ -2184,7 +2184,7 @@ cali_saradc_desc_t *bk7011_cal_saradc_open()
     }
 
     param = PWD_SARADC_CLK_BIT;
-    sddev_control(ICU_DEV_NAME, CMD_CLK_PWR_UP, &param);//REG_0x2£º00FFFD7C
+    sddev_control(ICU_DEV_NAME, CMD_CLK_PWR_UP, &param);//REG_0x2ï¿½ï¿½00FFFD7C
 
     param = BLK_BIT_SARADC;
     sddev_control(SCTRL_DEV_NAME, CMD_SCTRL_BLK_ENABLE, &param);
@@ -2493,6 +2493,13 @@ void bk7011_set_rfcali_mode(int mode)
     os_printf("set rfcali_mode:%d\r\n", gcali_context.cali_mode);
 }
 
+char rx2_use_flag = 0; //
+
+char get_rx2_flag(void)
+{
+    return rx2_use_flag;
+}
+
 UINT32 rwnx_cal_load_user_rfcali_mode(int *rfcali_mode)
 {
     #define RF_MODE_GPIO_ID                 (GPIO1)
@@ -2509,6 +2516,8 @@ UINT32 rwnx_cal_load_user_rfcali_mode(int *rfcali_mode)
     txpwr_state = manual_cal_txpwr_tab_ready_in_flash();
 
     gpio_level = bk_gpio_input(RF_MODE_GPIO_ID);
+
+    rx2_use_flag = 1;
 
     second_func = GFUNC_MODE_UART2;
     gpio_ctrl(CMD_GPIO_ENABLE_SECOND, &second_func);
