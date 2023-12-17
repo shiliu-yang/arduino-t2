@@ -31,6 +31,9 @@ STATIC void arduino_thread(void *arg)
     return;
 }
 
+void bk_printf(const char *fmt, ...);
+extern char get_rx2_flag(void);
+
 STATIC void tuya_app_thread(void *arg)
 {
     OPERATE_RET rt = OPRT_OK;
@@ -40,16 +43,19 @@ STATIC void tuya_app_thread(void *arg)
     TUYA_LwIP_Init();
 #endif
 
-    // TY_INIT_PARAMS_S init_param = {0};
-    // init_param.init_db = TRUE;
-    // strcpy(init_param.sys_env, TARGET_PLATFORM);
-    // TUYA_CALL_ERR_LOG(tuya_iot_init_params(NULL, &init_param));
+    TY_INIT_PARAMS_S init_param = {0};
+    init_param.init_db = TRUE;
+    strcpy(init_param.sys_env, TARGET_PLATFORM);
+    TUYA_CALL_ERR_LOG(tuya_iot_init_params(NULL, &init_param));
 
     tal_log_set_manage_attr(TAL_LOG_LEVEL_DEBUG);
-    // deinit log uart
-    // tkl_uart_deinit(UART_NUM_0);
 
-    THREAD_CFG_T thrd_param = {1024*10, THREAD_PRIO_1, (CHAR_T *)"arduino_thrd"};
+    // wait rf cali
+    while (get_rx2_flag() == 0) {
+        tal_system_sleep(1);
+    }
+
+    THREAD_CFG_T thrd_param = {1024*10, THREAD_PRIO_3, (CHAR_T *)"arduino_thrd"};
     tal_thread_create_and_start(&arduino_thrd_hdl, NULL, NULL, arduino_thread, NULL, &thrd_param);
 
     return;
@@ -57,7 +63,7 @@ STATIC void tuya_app_thread(void *arg)
 
 void tuya_app_main(void)
 {
-    THREAD_CFG_T thrd_param = {4096, THREAD_PRIO_1, (CHAR_T *)"tuya_app_thread"};
+    THREAD_CFG_T thrd_param = {4096, THREAD_PRIO_3, (CHAR_T *)"tuya_app_thread"};
     tal_thread_create_and_start(&ty_app_thread, NULL, NULL, tuya_app_thread, NULL, &thrd_param);
 }
 
