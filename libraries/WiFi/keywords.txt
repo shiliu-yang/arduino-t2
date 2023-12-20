@@ -1,0 +1,20 @@
+#######################################
+# Library (KEYWORD1)
+#######################################
+WiFi	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+channel	KEYWORD2
+mode	KEYWORD2
+getMode	KEYWORD2
+enableSTA	KEYWORD2
+enableAP	KEYWORD2
+setSleep	KEYWORD2
+
+begin	KEYWORD2
+disconnect	KEYWORD2
+
+beginAP	KEYWORD2
