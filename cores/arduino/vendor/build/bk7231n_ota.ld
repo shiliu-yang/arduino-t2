@@ -109,8 +109,8 @@ SECTIONS
     . = ALIGN(0x8);
 	.text : 
 	{
-	    *(EXCLUDE_FILE(*core.a:*).text)
-	    *(EXCLUDE_FILE(*core.a:*).text.*)
+	    *(.text)
+	    *(.text.*)
 	    *(.stub)
 	    /* .gnu.warning sections are handled specially by elf32.em.  */
 	    *(.gnu.warning)
@@ -121,8 +121,8 @@ SECTIONS
 /* read only data.for example: const int rom_data[3]={1,2,3}; */
 	.rodata ALIGN(8) : 
 	{
-		*(EXCLUDE_FILE(*core.a:*)*.rodata)
-		*(EXCLUDE_FILE(*core.a:*)*.rodata.*)
+		*(.rodata)
+		*(.rodata.*)
 		*(.gnu.linkonce.r*)
 	} > flash
 
