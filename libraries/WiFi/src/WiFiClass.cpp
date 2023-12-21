@@ -98,7 +98,7 @@ int WiFiClass::begin(const char* ssid, const char *password)
 
     rt = tal_wifi_station_connect((SCHAR_T *)ssid, (SCHAR_T *)password);
     if (rt != OPRT_OK) {
-        tal_wifi_station_get_err_stat(&rtVal);
+        tal_wifi_station_get_status(&rtVal);
     }
 
     return (int)rtVal;
