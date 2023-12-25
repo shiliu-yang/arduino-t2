@@ -80,6 +80,20 @@ bool WiFiClass::setSleep(bool enabled)
     return (rt == OPRT_OK) ? true : false;
 }
 
+IPAddress WiFiClass::localIP()
+{
+    OPERATE_RET rt = OPRT_OK;
+    IPAddress localIP((uint32_t)0);
+    NW_IP_S staIP;
+
+    // TODO: fast connect can't get ip
+    rt = tal_wifi_get_ip(WF_STATION, &staIP);
+    if (OPRT_OK == rt) {
+        localIP = IPAddress((const char *)staIP.ip);
+    }
+    return localIP;
+}
+
 /*********************************** wifi station *******************************************/
 int WiFiClass::begin(const char* ssid)
 {

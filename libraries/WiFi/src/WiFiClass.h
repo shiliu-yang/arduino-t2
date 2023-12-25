@@ -1,6 +1,7 @@
 #ifndef __WIFI_CLASS_H__
 #define __WIFI_CLASS_H__
 
+#include <Arduino.h>
 #include <stdint.h>
 #include "WiFiType.h"
 
@@ -20,6 +21,8 @@ public:
     bool enableAP(bool enable);
 
     bool setSleep(bool enabled);
+
+    IPAddress localIP();
 
     /* wifi station */
     int begin(const char* ssid); // open networks
