@@ -8,6 +8,8 @@
 
 extern "C" void bk_printf(const char *fmt, ...);
 
+#define DEBUG_PRINTF bk_printf
+
 #undef write
 #undef read
 
@@ -40,18 +42,18 @@ uint8_t WiFiUdp::begin(IPAddress a, uint16_t p)
 
   _txBuff = (char *)malloc(UDP_TX_PACKET_MAX_SIZE);
   if(!_txBuff){
-    bk_printf("could not create tx buffer: %d", errno);
+    DEBUG_PRINTF("could not create tx buffer: %d", errno);
     return 0;
   }
 
   if ((_udpSocket=socket(AF_INET, SOCK_DGRAM, 0)) == -1){
-    bk_printf("could not create socket: %d", errno);
+    DEBUG_PRINTF("could not create socket: %d", errno);
     return 0;
   }
 
   int yes = 1;
   if (setsockopt(_udpSocket,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(yes)) < 0) {
-      bk_printf("could not set socket option: %d", errno);
+      DEBUG_PRINTF("could not set socket option: %d", errno);
       stop();
       return 0;
   }
@@ -62,7 +64,7 @@ uint8_t WiFiUdp::begin(IPAddress a, uint16_t p)
   addr.sin_port = htons(_port);
   addr.sin_addr.s_addr = (in_addr_t)a;
   if(bind(_udpSocket , (struct sockaddr*)&addr, sizeof(addr)) == -1){
-    bk_printf("could not bind socket: %d", errno);
+    DEBUG_PRINTF("could not bind socket: %d", errno);
     stop();
     return 0;
   }
@@ -78,7 +80,7 @@ uint8_t WiFiUdp::beginMulticast(IPAddress a, uint16_t p)
       mreq.imr_multiaddr.s_addr = (uint32_t)a;
       mreq.imr_interface.s_addr = (in_addr_t)INADDR_ANY;
       if (setsockopt(_udpSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
-          bk_printf("could not join igmp: %d", errno);
+          DEBUG_PRINTF("could not join igmp: %d", errno);
           stop();
           return 0;
       }
@@ -131,7 +133,7 @@ int WiFiUdp::beginPacket(IPAddress ip, uint16_t port)
   if(!_txBuff){
     _txBuff = (char *)malloc(1460);
     if(!_txBuff){
-      bk_printf("could not create tx buffer: %d", errno);
+      DEBUG_PRINTF("could not create tx buffer: %d", errno);
       return 0;
     }
   }
@@ -143,7 +145,7 @@ int WiFiUdp::beginPacket(IPAddress ip, uint16_t port)
     return 1;
 
   if ((_udpSocket=socket(AF_INET, SOCK_DGRAM, 0)) == -1){
-    bk_printf("could not create socket: %d", errno);
+    DEBUG_PRINTF("could not create socket: %d", errno);
     return 0;
   }
 
@@ -157,10 +159,10 @@ int WiFiUdp::beginPacket(const char *host, uint16_t port)
   struct hostent *server;
   server = gethostbyname(host);
   if (server == NULL){
-    bk_printf("could not get host from dns: %d", errno);
+    DEBUG_PRINTF("could not get host from dns: %d", errno);
     return 0;
   }
-  return beginPacket(IPAddress((const uint8_t *)(server->h_addr_list[0])), port);
+  return beginPacket(IPAddress((const char *)(server->h_addr_list[0])), port);
 }
 
 int WiFiUdp::endPacket()
@@ -171,7 +173,7 @@ int WiFiUdp::endPacket()
   recipient.sin_port = htons(_remotePort);
   int sent = sendto(_udpSocket, _txBuff, _txBuffLen, 0, (struct sockaddr*) &recipient, sizeof(recipient));
   if(sent < 0){
-    bk_printf("could not send data: %d", errno);
+    DEBUG_PRINTF("could not send data: %d", errno);
     return 0;
   }
   return 1;
@@ -211,7 +213,7 @@ int WiFiUdp::parsePacket()
     if(errno == EWOULDBLOCK){
       return 0;
     }
-    bk_printf("could not receive data: %d", errno);
+    DEBUG_PRINTF("could not receive data: %d", errno);
     return 0;
   }
   _remoteIP = IPAddress(si_other.sin_addr.s_addr);
