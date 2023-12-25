@@ -11,9 +11,14 @@ private:
   int _udpSocket;
   uint16_t _port;
 
+  IPAddress _multicastIP;
+
   IPAddress _remoteIP;
   uint16_t _remotePort;
   cbuf *_rxBuff;
+
+  char *_txBuff;
+  size_t _txBuffLen;
 
 public:
   WiFiUdp();
