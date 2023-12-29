@@ -40,7 +40,7 @@ public:
   int connect(IPAddress ip, uint16_t port);
   int connect(IPAddress ip, uint16_t port, uint32_t timeoutMs);
   int connect(const char *host, uint16_t port);
-  size_t write(uint8_t);
+  size_t write(uint8_t data);
   size_t write(const uint8_t *buf, size_t size);
   using Print::write;
 

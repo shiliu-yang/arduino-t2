@@ -11,6 +11,9 @@ extern "C" void bk_printf(const char *fmt, ...);
 
 #define DEBUG_PRINTF bk_printf
 
+#define WIFI_CLIENT_MAX_WRITE_RETRY      (10)
+#define WIFI_CLIENT_SELECT_TIMEOUT_US    (1000000)
+
 #undef connect
 #undef write
 #undef read
@@ -35,6 +38,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
 
 int WiFiClient::connect(IPAddress ip, uint16_t port, uint32_t timeoutMs)
 {
+
   _timeoutMs = timeoutMs;
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
@@ -107,14 +111,67 @@ int WiFiClient::connect(const char *host, uint16_t port)
 {
   return 1;
 }
-size_t WiFiClient::write(uint8_t)
+
+size_t WiFiClient::write(uint8_t data)
 {
-  return 0;
+  return write(&data, 1);
 }
+
 size_t WiFiClient::write(const uint8_t *buf, size_t size)
 {
-  return 0;
+  int res =0;
+  int retry = WIFI_CLIENT_MAX_WRITE_RETRY;
+  int socketFD = _sockfd;
+  size_t totalBytesSent = 0;
+  size_t bytesRemaining = size;
+
+  if(!_connected || (socketFD < 0)) {
+    return 0;
+  }
+
+  while(retry) {
+    //use select to make sure the socket is ready for writing
+    fd_set set;
+    struct timeval tv;
+    FD_ZERO(&set);        // empties the set
+    FD_SET(socketFD, &set); // adds FD to the set
+    tv.tv_sec = 0;
+    tv.tv_usec = WIFI_CLIENT_SELECT_TIMEOUT_US;
+    retry--;
+
+    if(select(socketFD + 1, NULL, &set, NULL, &tv) < 0) {
+      return 0;
+    }
+
+    if(FD_ISSET(socketFD, &set)) {
+      res = send(socketFD, (void*) buf, bytesRemaining, MSG_DONTWAIT);
+      if(res > 0) {
+        totalBytesSent += res;
+        if (totalBytesSent >= size) {
+          //completed successfully
+          retry = 0;
+        } else {
+          buf += res;
+          bytesRemaining -= res;
+          retry = WIFI_CLIENT_MAX_WRITE_RETRY;
+        }
+      } else if(res < 0) {
+        // DEBUG_PRINTF("fail on fd %d, errno: %d, \"%s\"", socketFD, errno, strerror(errno));
+        if(errno != EAGAIN) {
+        //   //if resource was busy, can try again, otherwise give up
+          this->stop();
+          res = 0;
+          retry = 0;
+        }
+      } else {
+        // Try again
+      }
+    }
+  }
+
+  return totalBytesSent;
 }
+
 int WiFiClient::available()
 {
   read(nullptr, 0);
