@@ -22,7 +22,7 @@ public:
 
     bool setSleep(bool enabled);
 
-    IPAddress localIP();
+    IPAddress localIP(void);
 
     /* wifi station */
     int begin(const char* ssid); // open networks
