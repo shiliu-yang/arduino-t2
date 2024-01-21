@@ -4,7 +4,7 @@ extern "C" {
 #include "tal_memory.h"
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"
-#include "errno.h"
+#include "tal_network.h"
 }//extern "C"
 
 extern "C" void bk_printf(const char *fmt, ...);
@@ -14,12 +14,14 @@ extern "C" void bk_printf(const char *fmt, ...);
 #define WIFI_CLIENT_MAX_WRITE_RETRY      (10)
 #define WIFI_CLIENT_SELECT_TIMEOUT_US    (1000000)
 
+#define RECV_TMP_BUFF_SIZE              (125)
+
 #undef connect
 #undef write
 #undef read
 
 WiFiClient::WiFiClient()
-: _timeoutMs(3000)
+: _timeoutMs(300)
 , _sockfd(-1)
 , _rxBuff(nullptr)
 {
@@ -38,66 +40,63 @@ int WiFiClient::connect(IPAddress ip, uint16_t port)
 
 int WiFiClient::connect(IPAddress ip, uint16_t port, uint32_t timeoutMs)
 {
-
   _timeoutMs = timeoutMs;
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  int sockfd = tal_net_socket_create(PROTOCOL_TCP);
   if (sockfd < 0) {
     DEBUG_PRINTF("socket: %d", errno);
     return 0;
   }
-  fcntl( sockfd, F_SETFL, fcntl( sockfd, F_GETFL, 0 ) | O_NONBLOCK );
+  tal_net_set_block(sockfd, 0);
 
-  struct sockaddr_in serveraddr;
-  memset((char *) &serveraddr, 0, sizeof(serveraddr));
-  serveraddr.sin_family = AF_INET;
-  serveraddr.sin_addr.s_addr = (in_addr_t)ip;
-  serveraddr.sin_port = htons(port);
-  fd_set fdset;
   struct timeval tv;
-  FD_ZERO(&fdset);
-  FD_SET(sockfd, &fdset);
   tv.tv_sec = _timeoutMs / 1000;
   tv.tv_usec = (_timeoutMs  % 1000) * 1000;
 
-  int res = lwip_connect(sockfd, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
-  if (res < 0 && errno != EINPROGRESS) {
-    DEBUG_PRINTF("connect on fd %d, errno: %d, \"%s\"", sockfd, errno, strerror(errno));
-    close(sockfd);
+  uint32_t tmpIP = static_cast<uint32_t>(ip);
+  TUYA_IP_ADDR_T serverIP = (TUYA_IP_ADDR_T)UNI_HTONL(tmpIP);
+  TUYA_ERRNO res = tal_net_connect(sockfd, serverIP, port);
+
+  if (res != 0 &&  errno != EINPROGRESS) {
+    DEBUG_PRINTF("connect on fd %d, res: %d, \"%s\"", sockfd, res, strerror(errno));
+    tal_net_close(sockfd);
     return 0;
   }
 
-  res = select(sockfd + 1, nullptr, &fdset, nullptr, _timeoutMs<0 ? nullptr : &tv);
+  TUYA_FD_SET_T fdset;
+  TAL_FD_ZERO(&fdset);
+  TAL_FD_SET(sockfd, &fdset);
+  tal_net_select(sockfd + 1, NULL, &fdset, NULL, _timeoutMs<0 ? NULL : (UINT_T)_timeoutMs);
   if (res < 0) {
     DEBUG_PRINTF("select on fd %d, errno: %d, \"%s\"", sockfd, errno, strerror(errno));
-    close(sockfd);
+    tal_net_close(sockfd);
     return 0;
   } else if (res == 0) {
-    DEBUG_PRINTF("select returned due to timeout %d ms for fd %d", _timeoutMs, sockfd);
-    close(sockfd);
+    DEBUG_PRINTF("select returned due to timeout %d ms for fd %d, \"%s\"\r\n", _timeoutMs, sockfd, strerror(errno));
+    tal_net_close(sockfd);
     return 0;
   } else {
     int sockerr;
-    socklen_t len = (socklen_t)sizeof(int);
-    res = getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &sockerr, &len);
+    INT_T len = (INT_T)sizeof(int);
+    res = tal_net_getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &sockerr, &len);
 
     if (res < 0) {
       DEBUG_PRINTF("getsockopt on fd %d, errno: %d, \"%s\"", sockfd, errno, strerror(errno));
-      close(sockfd);
+      tal_net_close(sockfd);
       return 0;
     }
 
     if (sockerr != 0) {
       DEBUG_PRINTF("socket error on fd %d, errno: %d, \"%s\"", sockfd, sockerr, strerror(sockerr));
-      close(sockfd);
+      tal_net_close(sockfd);
       return 0;
     }
   }
 
-#define ROE_WIFICLIENT(x,msg) { if (((x)<0)) { DEBUG_PRINTF("Setsockopt '" msg "'' on fd %d failed. errno: %d, \"%s\"", sockfd, errno, strerror(errno)); return 0; }}
-  ROE_WIFICLIENT(setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv)),"SO_SNDTIMEO");
-  ROE_WIFICLIENT(setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)),"SO_RCVTIMEO");
+#define ROE_WIFICLIENT(x,msg) { if (((x)<0)) {DEBUG_PRINTF("Setsockopt '" msg "'' on fd %d failed. errno: %d, \"%s\"", sockfd, errno, strerror(errno)); return 0; }}
+  ROE_WIFICLIENT(tal_net_setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv)),"SO_SNDTIMEO");
+  ROE_WIFICLIENT(tal_net_setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)),"SO_RCVTIMEO");
 
-  fcntl( sockfd, F_SETFL, fcntl( sockfd, F_GETFL, 0 ) & (~O_NONBLOCK) );
+  tal_net_set_block(sockfd, 1);
   _sockfd = sockfd;
   if (_rxBuff) {
     _rxBuff->flush();
@@ -130,21 +129,18 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
   }
 
   while(retry) {
-    //use select to make sure the socket is ready for writing
-    fd_set set;
-    struct timeval tv;
-    FD_ZERO(&set);        // empties the set
-    FD_SET(socketFD, &set); // adds FD to the set
-    tv.tv_sec = 0;
-    tv.tv_usec = WIFI_CLIENT_SELECT_TIMEOUT_US;
+    TUYA_FD_SET_T set;
+    TAL_FD_ZERO(&set);        // empties the set
+    TAL_FD_SET(socketFD, &set); // adds FD to the set
+    UINT_T timeoutMs = WIFI_CLIENT_SELECT_TIMEOUT_US / 1000;
     retry--;
 
-    if(select(socketFD + 1, NULL, &set, NULL, &tv) < 0) {
+    if(tal_net_select(socketFD + 1, NULL, &set, NULL, timeoutMs) < 0) {
       return 0;
     }
 
-    if(FD_ISSET(socketFD, &set)) {
-      res = send(socketFD, (void*) buf, bytesRemaining, MSG_DONTWAIT);
+    if(TAL_FD_ISSET(socketFD, &set)) {
+      res = tal_net_send(socketFD, (void*) buf, bytesRemaining);
       if(res > 0) {
         totalBytesSent += res;
         if (totalBytesSent >= size) {
@@ -156,9 +152,7 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size)
           retry = WIFI_CLIENT_MAX_WRITE_RETRY;
         }
       } else if(res < 0) {
-        // DEBUG_PRINTF("fail on fd %d, errno: %d, \"%s\"", socketFD, errno, strerror(errno));
         if(errno != EAGAIN) {
-        //   //if resource was busy, can try again, otherwise give up
           this->stop();
           res = 0;
           retry = 0;
@@ -188,33 +182,44 @@ int WiFiClient::read()
 
 int WiFiClient::read(uint8_t *buf, size_t size)
 {
-  int count = 0;
-  int res = lwip_ioctl(_sockfd, FIONREAD, &count);
-  if (res<0 || count==0) {
+  uint8_t *tmpBuff = NULL;
+
+  if (-1 == _sockfd) {
     return 0;
   }
 
+  int res = 0;
+
   if (nullptr == _rxBuff) {
     _rxBuff = new cbuf(TCP_RX_PACKET_MAX_SIZE);
-    if (!_rxBuff) {
+    if (nullptr == _rxBuff) {
       return -1;
     }
   }
 
-  uint8_t *tmpBuff = (uint8_t *)tal_malloc(count);
-  if (!tmpBuff) {
-    return -1;
+  TUYA_FD_SET_T readfds;
+  TAL_FD_ZERO(&readfds);
+  TAL_FD_SET(_sockfd, &readfds);
+  res = tal_net_select(_sockfd + 1, &readfds, NULL, NULL, 1);
+  if (res > 0 && TAL_FD_ISSET(_sockfd, &readfds)) {
+    tmpBuff = (uint8_t *)tal_malloc(RECV_TMP_BUFF_SIZE);
+    if (NULL == tmpBuff) {
+      return -1;
+    }
+    while (1) {
+      res = tal_net_recv(_sockfd, tmpBuff, RECV_TMP_BUFF_SIZE);
+      if (res > 0) {
+        _rxBuff->write((const char*)tmpBuff, (size_t)res);
+      } else {
+        break;
+      }
+    }
+    tal_free(tmpBuff);
+    tmpBuff = NULL;
   }
 
-  res = recv(_sockfd, tmpBuff, count, MSG_DONTWAIT);
-  if(res < 0) {
-    return 0;
-  }
-  _rxBuff->write((const char*)tmpBuff, (size_t)count);
-  tal_free(tmpBuff);
-
-  if (!buf && size > 0) {
-    _rxBuff->read((char*)buf, size);
+  if (nullptr != buf && size > 0) {
+    _rxBuff->read((char *)buf, size);
   }
 
   return res;
@@ -235,7 +240,7 @@ void WiFiClient::flush()
 
 void WiFiClient::stop()
 {
-  close(_sockfd);
+  tal_net_close(_sockfd);
   _sockfd = -1;
   if (_rxBuff) {
     cbuf *b = _rxBuff;
