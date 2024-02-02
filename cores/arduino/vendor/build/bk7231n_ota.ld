@@ -501,7 +501,7 @@ SECTIONS
 /* This symbol defines end of code/data sections. Heap starts here. */
 	PROVIDE(end    	  = .);
 
-	. = __exidx_end + SIZEOF(.data);
+	. = __exidx_end + SIZEOF(.data) + 0x10000;
 	. = ALIGN(0x8);
 	.ty_text_section ALIGN(0x10000) :
 	{

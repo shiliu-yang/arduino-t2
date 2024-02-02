@@ -4,7 +4,9 @@ extern "C" {
 #include "tal_memory.h"
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"
+#include "errno.h"
 #include "tal_network.h"
+#include "stdint.h"
 }//extern "C"
 
 extern "C" void bk_printf(const char *fmt, ...);
@@ -21,7 +23,7 @@ extern "C" void bk_printf(const char *fmt, ...);
 #undef read
 
 WiFiClient::WiFiClient()
-: _timeoutMs(300)
+: _timeoutMs(50)
 , _sockfd(-1)
 , _rxBuff(nullptr)
 {

@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
-#define STASSID "8F-S-04-04"
-#define STAPSK "1223334444"
+#define WIFI_SSID       "your-ssid"
+#define WIFI_PASSWORD   "your-password"
 
 unsigned int localPort = 8888;  // local port to listen on
 
@@ -16,7 +16,7 @@ WiFiUdp Udp;
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin(STASSID, STAPSK);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (!WiFi.isConnected()) {
     Serial.print('.');
     delay(500);

@@ -282,6 +282,7 @@ static void wm_netif_status_callback(struct netif *n)
 	else 
 	{
 		// dhcp fail;
+		bk_printf("dhcp fail2!!!\r\n");
 	}
 }
 

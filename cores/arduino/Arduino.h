@@ -6,17 +6,6 @@
 
 #if defined(__cplusplus) && !defined(c_plusplus)
 
-// C functions defined
-#if (defined(__cplusplus)||defined(c_plusplus))
-extern "C"{
-#endif
-
-void tuya_app_main(void);
-
-#if (defined(__cplusplus)||defined(c_plusplus))
-}
-#endif
-
 using namespace arduino;
 
 #include "SerialUART.h"
@@ -26,6 +15,6 @@ using namespace arduino;
 #define Serial1 _SerialUART0_
 #define Serial2 _SerialUART1_
 
-#endif
+#endif // __cplusplus
 
 #endif // ARDUINO_H

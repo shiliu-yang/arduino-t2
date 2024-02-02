@@ -1,4 +1,13 @@
-#include "Arduino.h"
+/**
+ * @file tuya_arduino_main.cpp
+ * @author www.tuya.com
+ * @brief tuya_arduino_main module is used to 
+ * @version 0.1
+ * @date 2024-02-02
+ *
+ * @copyright Copyright (c) tuya.inc 2024
+ *
+ */
 
 #include "tuya_cloud_types.h"
 #include "tuya_iot_com_api.h"
@@ -12,15 +21,39 @@
 #include "lwip_init.h"
 #endif
 
+/***********************************************************
+************************macro define************************
+***********************************************************/
+
+
+/***********************************************************
+***********************typedef define***********************
+***********************************************************/
+
+
+/***********************************************************
+********************function declaration********************
+***********************************************************/
+
+
+/***********************************************************
+***********************variable define**********************
+***********************************************************/
+STATIC THREAD_HANDLE ty_app_thread = NULL;
+STATIC THREAD_HANDLE arduino_thrd_hdl = NULL;
+
+/***********************************************************
+***********************function define**********************
+***********************************************************/
+
 #if (defined(__cplusplus)||defined(c_plusplus))
 extern "C"{
 #endif
 
-STATIC THREAD_HANDLE ty_app_thread = NULL;
-STATIC THREAD_HANDLE arduino_thrd_hdl = NULL;
-
 STATIC void arduino_thread(void *arg)
 {
+    extern void setup();
+    extern void loop();
     setup();
 
     for (;;) {
@@ -30,8 +63,6 @@ STATIC void arduino_thread(void *arg)
 
     return;
 }
-
-extern char get_rx2_flag(void);
 
 STATIC void tuya_app_thread(void *arg)
 {
@@ -50,6 +81,7 @@ STATIC void tuya_app_thread(void *arg)
     tal_log_set_manage_attr(TAL_LOG_LEVEL_DEBUG);
 
     // wait rf cali
+    extern char get_rx2_flag(void);
     while (get_rx2_flag() == 0) {
         tal_system_sleep(1);
     }
@@ -66,19 +98,16 @@ void tuya_app_main(void)
     tal_thread_create_and_start(&ty_app_thread, NULL, NULL, tuya_app_thread, NULL, &thrd_param);
 }
 
-#if (defined(__cplusplus)||defined(c_plusplus))
-}
-#endif
-
 /* stub for __libc_init_array */
-extern "C" void _fini(void) {}
-extern "C" void _init(void)
+void _fini(void) {}
+void _init(void)
 {
     ;
 }
 
 // This hack is needed because Beken SDK is not linking against libstdc++ correctly.
-extern "C" {
 void * __dso_handle = 0;
-}
 
+#if (defined(__cplusplus)||defined(c_plusplus))
+}
+#endif

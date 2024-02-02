@@ -4,6 +4,7 @@ extern "C" {
 #include <string.h>
 #include <stdlib.h>
 #include "tal_wifi.h"
+#include "tkl_wifi.h"
 }//extern "C"
 
 WiFiClass::WiFiClass()
@@ -86,8 +87,10 @@ IPAddress WiFiClass::localIP(void)
     IPAddress retIP((uint32_t)0);
     NW_IP_S staIP;
 
-    // TODO: fast connect can't get ip
+#if 0
     rt = tal_wifi_get_ip(WF_STATION, &staIP);
+#endif
+    rt = tkl_wifi_get_ip(WF_STATION, &staIP);
     if (OPRT_OK == rt) {
         retIP = IPAddress((const char *)staIP.ip);
     }
