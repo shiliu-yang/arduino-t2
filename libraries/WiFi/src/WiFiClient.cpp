@@ -16,6 +16,7 @@ extern "C" void bk_printf(const char *fmt, ...);
 
 #define WIFI_CLIENT_MAX_WRITE_RETRY      (10)
 #define WIFI_CLIENT_SELECT_TIMEOUT_US    (1000000)
+#define WIFI_CLIENT_RECV_TIMEOUT_MS      (50)
 
 #define RECV_TMP_BUFF_SIZE              (125)
 
@@ -24,7 +25,7 @@ extern "C" void bk_printf(const char *fmt, ...);
 #undef read
 
 WiFiClient::WiFiClient()
-: _timeoutMs(50)
+: _timeoutMs(3000)
 , _sockfd(-1)
 , _rxBuff(nullptr)
 {
@@ -57,7 +58,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port, uint32_t timeoutMs)
 
   uint32_t tmpIP = static_cast<uint32_t>(ip);
   TUYA_IP_ADDR_T serverIP = (TUYA_IP_ADDR_T)UNI_HTONL(tmpIP);
-  TUYA_ERRNO res = tal_net_connect(sockfd, serverIP, port);
+  INT_T res = tal_net_connect(sockfd, serverIP, port);
 
   if (res != 0 &&  errno != EINPROGRESS) {
     DEBUG_PRINTF("connect on fd %d, res: %d, \"%s\"", sockfd, res, strerror(errno));
@@ -68,7 +69,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port, uint32_t timeoutMs)
   TUYA_FD_SET_T fdset;
   TAL_FD_ZERO(&fdset);
   TAL_FD_SET(sockfd, &fdset);
-  tal_net_select(sockfd + 1, NULL, &fdset, NULL, _timeoutMs<0 ? 50 : (UINT_T)_timeoutMs);
+  res = tal_net_select(sockfd + 1, NULL, &fdset, NULL, _timeoutMs<0 ? 50 : (UINT_T)_timeoutMs);
   if (res < 0) {
     DEBUG_PRINTF("select on fd %d, errno: %d, \"%s\"", sockfd, errno, strerror(errno));
     tal_net_close(sockfd);
@@ -97,6 +98,10 @@ int WiFiClient::connect(IPAddress ip, uint16_t port, uint32_t timeoutMs)
 
 #define ROE_WIFICLIENT(x,msg) { if (((x)<0)) {DEBUG_PRINTF("Setsockopt '" msg "'' on fd %d failed. errno: %d, \"%s\"", sockfd, errno, strerror(errno)); return 0; }}
   ROE_WIFICLIENT(tal_net_setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv)),"SO_SNDTIMEO");
+
+  // Unable to retrieve the number of received bytes, so the receive timeout is set to WIFI_CLIENT_RECV_TIMEOUT_MS
+  tv.tv_sec = WIFI_CLIENT_RECV_TIMEOUT_MS / 1000;
+  tv.tv_usec = (WIFI_CLIENT_RECV_TIMEOUT_MS  % 1000) * 1000;
   ROE_WIFICLIENT(tal_net_setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)),"SO_RCVTIMEO");
 
   tal_net_set_block(sockfd, 1);
