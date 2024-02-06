@@ -87,10 +87,8 @@ IPAddress WiFiClass::localIP(void)
     IPAddress retIP((uint32_t)0);
     NW_IP_S staIP;
 
-#if 0
     rt = tal_wifi_get_ip(WF_STATION, &staIP);
-#endif
-    rt = tkl_wifi_get_ip(WF_STATION, &staIP);
+
     if (OPRT_OK == rt) {
         retIP = IPAddress((const char *)staIP.ip);
     }

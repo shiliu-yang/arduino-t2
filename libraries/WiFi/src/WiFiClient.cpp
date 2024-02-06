@@ -67,7 +67,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port, uint32_t timeoutMs)
   TUYA_FD_SET_T fdset;
   TAL_FD_ZERO(&fdset);
   TAL_FD_SET(sockfd, &fdset);
-  tal_net_select(sockfd + 1, NULL, &fdset, NULL, _timeoutMs<0 ? NULL : (UINT_T)_timeoutMs);
+  tal_net_select(sockfd + 1, NULL, &fdset, NULL, _timeoutMs<0 ? 50 : (UINT_T)_timeoutMs);
   if (res < 0) {
     DEBUG_PRINTF("select on fd %d, errno: %d, \"%s\"", sockfd, errno, strerror(errno));
     tal_net_close(sockfd);
