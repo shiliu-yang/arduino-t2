@@ -22,6 +22,7 @@
 #include <Arduino.h>
 #include "api/Client.h"
 #include "cbuf.h"
+#include "tuya_cloud_types.h"
 
 #define TCP_TX_PACKET_MAX_SIZE 1436
 #define TCP_RX_PACKET_MAX_SIZE 1436

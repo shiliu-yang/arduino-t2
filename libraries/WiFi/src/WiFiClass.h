@@ -2,7 +2,7 @@
 #define __WIFI_CLASS_H__
 
 #include <Arduino.h>
-#include <stdint.h>
+#include "tuya_cloud_types.h"
 #include "WiFiType.h"
 
 class WiFiClass{

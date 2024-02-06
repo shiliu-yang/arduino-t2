@@ -1,6 +1,7 @@
 #include "WiFiClient.h"
 
 extern "C" {
+#include "tuya_cloud_types.h"
 #include "tal_memory.h"
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"
@@ -202,6 +203,8 @@ int WiFiClient::read(uint8_t *buf, size_t size)
   TUYA_FD_SET_T readfds;
   TAL_FD_ZERO(&readfds);
   TAL_FD_SET(_sockfd, &readfds);
+
+#if 1
   res = tal_net_select(_sockfd + 1, &readfds, NULL, NULL, 1);
   if (res > 0 && TAL_FD_ISSET(_sockfd, &readfds)) {
     tmpBuff = (uint8_t *)tal_malloc(RECV_TMP_BUFF_SIZE);
@@ -219,6 +222,10 @@ int WiFiClient::read(uint8_t *buf, size_t size)
     tal_free(tmpBuff);
     tmpBuff = NULL;
   }
+#else
+  // LWIP_SO_RCVBUF is not available
+  // int res = lwip_ioctl(_sockfd, FIONREAD, &count);
+#endif
 
   if (nullptr != buf && size > 0) {
     _rxBuff->read((char *)buf, size);

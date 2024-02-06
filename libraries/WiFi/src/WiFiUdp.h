@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "cbuf.h"
+#include "tuya_cloud_types.h"
 
 #define UDP_TX_PACKET_MAX_SIZE 1460
 #define UDP_RX_PACKET_MAX_SIZE 1460
